@@ -53,8 +53,7 @@ lint: ## Run SwiftLint in strict mode.
 test: ## Run package unit tests.
 	@$(SWIFTPM_GIT_ENV) xcodebuild test \
 		-scheme "$(PACKAGE_SCHEME)" \
-		-destination "$(IOS_DESTINATION)" \
-		-skipMacroValidation
+		-destination "$(IOS_DESTINATION)"
 
 .PHONY: build-sample
 build-sample: generate-sample-project ## Generate and build the sample app.
@@ -63,7 +62,6 @@ build-sample: generate-sample-project ## Generate and build the sample app.
 		-scheme "$(SAMPLE_SCHEME)" \
 		-configuration Debug \
 		-destination "$(IOS_DESTINATION)" \
-		-skipMacroValidation \
 		CODE_SIGNING_ALLOWED=NO
 
 .PHONY: ci
