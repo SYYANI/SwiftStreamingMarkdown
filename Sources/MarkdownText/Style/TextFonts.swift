@@ -8,7 +8,8 @@ import SwiftUI
 /// A bundle of font variants (normal/italic/bold/boldItalic) plus optional
 /// preferred letter and line spacing values, used by `MarkdownRenderConfig`
 /// to style a run of text.
-public struct TextFonts: Hashable, Sendable {
+/// `@unchecked Sendable`: all stored properties are `let`, and `MDFont` is immutable but not annotated `Sendable` by the SDK.
+public struct TextFonts: Hashable, @unchecked Sendable {
   /// Regular variant. Always required.
   public let normal: MDFont
   /// Italic variant, or `nil` to fall back to `normal` for emphasis.

@@ -38,9 +38,9 @@ public struct DocumentView: View {
     .task {
       await controller.onAppear(markdown: renderableDocument)
     }
-    .onChange(of: renderableDocument, perform: { md in
+    .onChange(of: renderableDocument) { _, md in
       controller.onChange(markdown: md)
-    })
+    }
     .onDisappear {
       Task {
         await controller.onDisappear()

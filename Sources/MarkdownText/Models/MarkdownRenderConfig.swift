@@ -125,7 +125,8 @@ public struct MarkdownRenderConfig: Hashable, Sendable {
   }
 
   /// Styling for inline runs: bold emphasis, links, and inline code spans.
-  public struct MarkdownInlineTextStyle: Hashable, Sendable {
+  /// `@unchecked Sendable`: all stored properties are `let`, and `MDFont` is immutable but not annotated `Sendable` by the SDK.
+  public struct MarkdownInlineTextStyle: Hashable, @unchecked Sendable {
     /// Foreground color applied to bold-emphasis runs.
     public let boldTextColor: Color
     /// Font used for link runs.
@@ -171,7 +172,8 @@ public struct MarkdownRenderConfig: Hashable, Sendable {
   }
 
   /// Controls whether inline citations are parsed and how they are rendered.
-  public struct CitationConfig: Hashable, Sendable {
+  /// `@unchecked Sendable`: all stored properties are `let`, and `MDFont` is immutable but not annotated `Sendable` by the SDK.
+  public struct CitationConfig: Hashable, @unchecked Sendable {
     /// When `false`, citation markers are left as plain text.
     public let isEnabled: Bool
     /// Encoder/decoder used to embed citation payloads into the markdown.

@@ -45,17 +45,10 @@ struct CodeBlockView: View {
   var codeblock: some View {
     ScrollView(.horizontal) {
       HStack(alignment: .top) {
-        if #available(iOS 16.1, *) {  // Minimum version for HighlightSwift
-          Text(attributedString ?? AttributedString(code))
-            .font(config.codeBlockConfig.codeTextFonts)
-            .transition(.opacity)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else {
-          Text(code)
-            .font(config.codeBlockConfig.codeTextFonts)
-            .foregroundStyle(Color.Theme.Component.CodeBlock.Foreground.FunctionParameter)
-            .transition(.opacity)
-        }
+        Text(attributedString ?? AttributedString(code))
+          .font(config.codeBlockConfig.codeTextFonts)
+          .transition(.opacity)
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
 
     }.transaction { transaction in
@@ -120,29 +113,29 @@ struct CodeBlockView: View {
             ))
           )
         })
-    }.onChange(of: copied, perform: { isCopied in
+    }.onChange(of: copied) { _, isCopied in
       if isCopied {
         Task {
           try await Task.sleep(seconds: 3)
           copied = false
         }
       }
-    })
-    .onChange(of: code, perform: { value in
+    }
+    .onChange(of: code) { _, value in
       Task {
         await updateAttributedString(code: value, scheme: colorScheme)
       }
-    })
-    .onChange(of: colorScheme, perform: { newValue in
+    }
+    .onChange(of: colorScheme) { _, newValue in
       Task {
         await updateAttributedString(code: code, scheme: newValue)
       }
-    })
-    .onChange(of: config, perform: { _ in
+    }
+    .onChange(of: config) {
       Task {
         await updateAttributedString(code: code, scheme: colorScheme)
       }
-    })
+    }
     .onAppear(perform: {
       Task {
         await updateAttributedString(code: code, scheme: colorScheme)

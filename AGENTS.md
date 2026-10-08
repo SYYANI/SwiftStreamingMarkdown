@@ -14,7 +14,7 @@ SwiftStreamingMarkdown is a Swift Package that renders **Markdown** in SwiftUI. 
 | UI | SwiftUI (some UIKit interop under `Sources/MarkdownText/UI/UIKit/`) |
 | swift-tools-version | 5.9 |
 | Minimum Xcode | **16.0** (the package contains `@available(iOS 18.0, *)` annotations that require the iOS 18 SDK) |
-| Minimum iOS deployment | iOS 16 |
+| Minimum iOS deployment | iOS 17 |
 | Build system | Swift Package Manager (no Bazel, no CocoaPods) |
 | Linter | SwiftLint (config: `.swiftlint.yml`, run via `swiftlint --strict`) |
 
