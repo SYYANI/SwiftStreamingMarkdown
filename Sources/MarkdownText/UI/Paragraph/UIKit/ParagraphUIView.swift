@@ -68,13 +68,6 @@ class ParagraphUIView: UITextView {
     return result
   }
 
-  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-    super.traitCollectionDidChange(previousTraitCollection)
-    if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
-      AppAppearance.update(style: traitCollection.userInterfaceStyle)
-    }
-  }
-
   override var intrinsicContentSize: CGSize {
     if let cachedSize {
       return cachedSize.size
@@ -201,6 +194,10 @@ class ParagraphUIView: UITextView {
 
     // Disable drag interaction to prevent crashes related to dragging from a view that might disappear
     textDragInteraction?.isEnabled = false
+
+    registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (view: Self, _: UITraitCollection) in
+      AppAppearance.update(style: view.traitCollection.userInterfaceStyle)
+    }
   }
 
   /// Creates a custom accessibility action that forwards activation to `onUrlTap`.
@@ -341,20 +338,29 @@ class ParagraphUIView: UITextView {
 
 // MARK: - UITextViewDelegate
 extension ParagraphUIView: UITextViewDelegate {
-  func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-    self.onUrlTap(URL)
-    return false
+  func textView(_ textView: UITextView, primaryActionFor textItem: UITextItem, defaultAction: UIAction) -> UIAction? {
+    let url: URL
+    switch textItem.content {
+    case .link(let link):
+      url = link
+    case .textAttachment(let attachment):
+      // Check if this is our custom citation attachment with pre-decoded data
+      guard let citationAttachment = attachment as? InlineCitationAttachment,
+            let citationData = citationAttachment.citationData else {
+        return nil
+      }
+      url = citationData.url
+    default:
+      return nil
+    }
+    return UIAction { [weak self] _ in
+      self?.onUrlTap(url)
+    }
   }
 
-  func textView(_ textView: UITextView, shouldInteractWith textAttachment: NSTextAttachment, in characterRange: NSRange) -> Bool {
-    // Check if this is our custom citation attachment with pre-decoded data
-    if let citationAttachment = textAttachment as? InlineCitationAttachment,
-       let citationData = citationAttachment.citationData {
-      self.onUrlTap(citationData.url)
-      return false
-    }
-
-    return false
+  func textView(_ textView: UITextView, menuConfigurationFor textItem: UITextItem, defaultMenu: UIMenu) -> UITextItem.MenuConfiguration? {
+    // No system link or attachment menus; taps go through `onUrlTap`.
+    nil
   }
 
   func textView(_ textView: UITextView, editMenuForTextIn range: NSRange, suggestedActions: [UIMenuElement]) -> UIMenu? {
