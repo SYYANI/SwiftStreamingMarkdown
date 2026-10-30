@@ -113,12 +113,14 @@ struct CodeBlockView: View {
             ))
           )
         })
-    }.onChange(of: copied) { _, isCopied in
-      if isCopied {
-        Task {
+    }.task(id: copied) {
+      if copied {
+        do {
           try await Task.sleep(seconds: 3)
-          copied = false
+        } catch {
+          return
         }
+        copied = false
       }
     }
     .onChange(of: code) { _, value in
